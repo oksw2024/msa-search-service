@@ -1,0 +1,179 @@
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--  <title>Book Search</title>-->
+<!--  &lt;!&ndash; Bootstrap CSS 추가 &ndash;&gt;-->
+<!--  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">-->
+<!--  <style>-->
+<!--    /* 페이지 배경 및 기본 스타일 */-->
+<!--    body {-->
+<!--      font-family: Arial, sans-serif;-->
+<!--      background-color: #f8f9fa;-->
+<!--      margin-top: 20px;-->
+<!--    }-->
+
+<!--    .container {-->
+<!--      max-width: 1000px;-->
+<!--    }-->
+
+<!--    .book-item {-->
+<!--      display: flex;-->
+<!--      align-items: flex-start;-->
+<!--      border-bottom: 1px solid #dee2e6;-->
+<!--      padding: 15px 0;-->
+<!--    }-->
+
+<!--    .book-image {-->
+<!--      flex: 0 0 120px;-->
+<!--      width: 120px;-->
+<!--      height: auto;-->
+<!--      margin-right: 20px;-->
+<!--      border-radius: 5px;-->
+<!--      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);-->
+<!--    }-->
+
+<!--    .book-details {-->
+<!--      flex: 1;-->
+<!--    }-->
+
+<!--    .book-title {-->
+<!--      font-size: 1.3em;-->
+<!--      font-weight: bold;-->
+<!--      color: #007bff;-->
+<!--      margin: 0;-->
+<!--    }-->
+
+<!--    .book-title:hover {-->
+<!--      text-decoration: underline;-->
+<!--    }-->
+
+<!--    .book-author, .book-publisher, .book-year, .book-isbn, .book-loan-count {-->
+<!--      color: #6c757d;-->
+<!--      font-size: 0.9em;-->
+<!--      margin: 2px 0;-->
+<!--    }-->
+
+<!--    .book-loan-count {-->
+<!--      font-weight: bold;-->
+<!--      margin-top: 5px;-->
+<!--    }-->
+
+<!--    .book-link {-->
+<!--      display: inline-block;-->
+<!--      margin-top: 10px;-->
+<!--      color: #007bff;-->
+<!--    }-->
+
+<!--    .book-link:hover {-->
+<!--      text-decoration: underline;-->
+<!--    }-->
+
+<!--    .pagination-centered {-->
+<!--      display: flex;-->
+<!--      justify-content: center;-->
+<!--      margin-top: 1rem;-->
+<!--    }-->
+<!--  </style>-->
+<!--</head>-->
+<!--<body>-->
+
+<!--<div class="container mt-5">-->
+
+<!--  &lt;!&ndash; 검색 상자 및 옵션 &ndash;&gt;-->
+<!--  <form th:action="@{/book/list}" method="get" class="mb-4">-->
+<!--    <div class="input-group">-->
+
+<!--      &lt;!&ndash; 검색 옵션 체크박스 &ndash;&gt;-->
+<!--      <div class="form-check form-check-inline">-->
+<!--        <input class="form-check-input" type="checkbox" name="searchType" value="title" id="titleCheckbox"-->
+<!--               onclick="checkOnlyOne(this)" th:checked="${searchType == 'title'}">-->
+<!--        <label class="form-check-label" for="titleCheckbox">Book Name</label>-->
+<!--      </div>-->
+<!--      <div class="form-check form-check-inline">-->
+<!--        <input class="form-check-input" type="checkbox" name="searchType" value="author" id="authorCheckbox"-->
+<!--               onclick="checkOnlyOne(this)" th:checked="${searchType == 'author'}">-->
+<!--        <label class="form-check-label" for="authorCheckbox">Author Name</label>-->
+<!--      </div>-->
+
+<!--      &lt;!&ndash; 검색어 입력 &ndash;&gt;-->
+<!--      <input type="text" name="keyword" th:value="${keyword}" class="form-control ml-2" placeholder="Enter your search term">-->
+<!--      <div class="input-group-append">-->
+<!--        <button class="btn btn-primary" type="submit">Search</button>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </form>-->
+
+
+<!--  <div th:if="${#lists.isEmpty(books)}" class="alert alert-info text-center">-->
+<!--    책 목록이 비어 있습니다.-->
+<!--  </div>-->
+
+<!--  <div th:if="${!#lists.isEmpty(books)}">-->
+<!--    <div th:each="docWrapper : ${books}" class="book-item">-->
+<!--      &lt;!&ndash; 책 이미지 &ndash;&gt;-->
+<!--      <img th:src="${docWrapper.doc.bookImageURL}" alt="Book Image" class="book-image"/>-->
+
+<!--      &lt;!&ndash; 책 세부 정보 &ndash;&gt;-->
+<!--      <div class="book-details">-->
+<!--        <p class="book-title">-->
+<!--          <a th:href="${docWrapper.doc.bookDtlUrl}" target="_blank" th:text="${docWrapper.doc.bookname}"></a>-->
+<!--        </p>-->
+<!--        <p class="book-author" th:text="'저자: ' + ${docWrapper.doc.authors}"></p>-->
+<!--        <p class="book-publisher" th:text="'출판사: ' + ${docWrapper.doc.publisher}"></p>-->
+<!--        <p class="book-year" th:text="'출판 연도: ' + ${docWrapper.doc.publicationYear}"></p>-->
+<!--        <p class="book-isbn" th:text="'ISBN: ' + ${docWrapper.doc.isbn13}"></p>-->
+<!--        <p class="book-loan-count" th:text="'대출 횟수: ' + ${docWrapper.doc.loanCount}"></p>-->
+<!--        <a th:href="${docWrapper.doc.bookDtlUrl}" target="_blank" class="book-link">상세 보기</a>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+
+<!--&lt;!&ndash; 페이징 버튼 &ndash;&gt;-->
+
+<!--<nav th:if="${totalPages > 0}" class="pagination-centered">-->
+<!--  <ul class="pagination">-->
+<!--    &lt;!&ndash; 이전 페이지 버튼 &ndash;&gt;-->
+<!--    <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">-->
+<!--      <a class="page-link" th:href="@{/book/list(keyword=${keyword}, searchType=${searchType}, pageNo=${currentPage - 1})}" aria-label="Previous">-->
+<!--        <span aria-hidden="true">&laquo;</span>-->
+<!--      </a>-->
+<!--    </li>-->
+
+<!--    &lt;!&ndash; 페이지 번호 버튼 &ndash;&gt;-->
+<!--    <li class="page-item"-->
+<!--        th:each="pageNum : ${#numbers.sequence(-->
+<!--                currentPage < 5 ? 0 : currentPage - 4,-->
+<!--                (currentPage < 5 ? 9 : currentPage + 5) < (totalPages - 1) ? (currentPage < 5 ? 9 : currentPage + 5) : totalPages - 1-->
+<!--            )}"-->
+<!--        th:classappend="${pageNum == currentPage} ? 'active'">-->
+<!--      <a class="page-link" th:href="@{/book/list(keyword=${keyword}, searchType=${searchType}, pageNo=${pageNum})}"-->
+<!--         th:text="${pageNum + 1}">1</a>-->
+<!--    </li>-->
+
+<!--    &lt;!&ndash; 다음 페이지 버튼 &ndash;&gt;-->
+<!--    <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">-->
+<!--      <a class="page-link" th:href="@{/book/list(keyword=${keyword}, searchType=${searchType}, pageNo=${currentPage + 1})}" aria-label="Next">-->
+<!--        <span aria-hidden="true">&raquo;</span>-->
+<!--      </a>-->
+<!--    </li>-->
+<!--  </ul>-->
+<!--</nav>-->
+
+<!--&lt;!&ndash; Bootstrap 및 jQuery JS &ndash;&gt;-->
+<!--<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>-->
+<!--<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>-->
+<!--<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>-->
+
+<!--&lt;!&ndash; JavaScript로 체크박스 단일 선택 구현 &ndash;&gt;-->
+<!--<script>-->
+<!--  function checkOnlyOne(checkbox) {-->
+<!--    const checkboxes = document.getElementsByName('searchType');-->
+<!--    checkboxes.forEach((item) => {-->
+<!--      if (item !== checkbox) item.checked = false;-->
+<!--    });-->
+<!--  }-->
+<!--</script>-->
+
+<!--</body>-->
+<!--</html>-->
