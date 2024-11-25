@@ -1,24 +1,15 @@
 package com.example.booksearch.service;
 
 import com.example.booksearch.model.BookExistResponse;
-import com.example.booksearch.model.BookVO;
-import com.example.booksearch.model.DocWrapperVO;
 import com.example.booksearch.model.SearchResultVO;
 import com.example.booksearch.util.UriBuilderUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
-import java.util.Collections;
-import java.util.List;
 
 @Service
 public class BookService {
@@ -35,7 +26,7 @@ public class BookService {
         URI uri = UriBuilderUtil.buildSearchUri(searchType, transformedKeyword, page, size);
 
         // 테스트용
-        System.out.println("BACKEND Request URI: " + uri);
+        System.out.println("BACKEND Request URI (searchBooks) : " + uri);
         // API 호출 및 결과 반환
         return fetchSearchResults(uri);
     }
@@ -57,38 +48,13 @@ public class BookService {
         }
     }
 
-    public void updateModelWithResults(Model model, SearchResultVO resultVO, int page, int size, String keyword, String searchType) {
-        if (resultVO == null || resultVO.getResponse() == null || resultVO.getResponse().getDocs() == null) {
-            model.addAttribute("books", Collections.emptyList());
-            model.addAttribute("currentPage", 0);
-            model.addAttribute("totalPages", 0);
-            model.addAttribute("hasNext", false);
-            model.addAttribute("hasPrevious", false);
-            model.addAttribute("keyword", keyword);
-            model.addAttribute("searchType", searchType);
-            System.out.println("No books found in response.");
-        } else {
-            List<DocWrapperVO> books = resultVO.getResponse().getDocs();
-            int totalElements = resultVO.getResponse().getNumFound();
-            Pageable pageable = PageRequest.of(page, size);
-            Page<DocWrapperVO> pagedBooks = new PageImpl<>(books, pageable, totalElements);
-
-            model.addAttribute("books", pagedBooks.getContent());
-            model.addAttribute("currentPage", page);
-            model.addAttribute("totalPages", pagedBooks.getTotalPages());
-            model.addAttribute("hasNext", pagedBooks.hasNext());
-            model.addAttribute("hasPrevious", pagedBooks.hasPrevious());
-            model.addAttribute("keyword", keyword);
-            model.addAttribute("searchType", searchType);
-        }
-    }
-
+    //대출여부확인
     public BookExistResponse checkBookExist(String isbn13, String libCode) {
 
         URI uri = UriBuilderUtil.buildBookExistUrl(isbn13, libCode);
 
         // 테스트용
-        System.out.println("BACKEND Request URI: " + uri);
+        System.out.println("BACKEND Request URI (checkBookExist) : " + uri);
 
         try {
             // OpenAPI 호출
